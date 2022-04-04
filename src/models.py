@@ -10,7 +10,7 @@ class User(db.Model):
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r>' % self.User
 
     def serialize(self):
         return {
@@ -35,6 +35,9 @@ class Characters(db.Model):
     description = db.Column(String(50))
     user_from_id = db.Column(Integer, ForeignKey('User.id'))
     user = relationship(User)
+
+    def __repr__(self):
+        return '<Characters %r>' % self.Characters
 
     def serialize(self):
         return {
@@ -70,6 +73,9 @@ class Planets(db.Model):
     pilots_id = db.Column(Integer, ForeignKey('Pilots.id'))
     user_from_id = db.Column(Integer, ForeignKey('User.id'))
     user = relationship(User)
+
+    def __repr__(self):
+        return '<Planets %r>' % self.Planets
 
     def serialize(self):
         return {
@@ -112,6 +118,9 @@ class Starships(db.Model):
     user_from_id = db.Column(Integer, ForeignKey('User.id'))
     user = relationship(User)
 
+    def __repr__(self):
+        return '<Starships %r>' % self.Starships
+
     def serialize(self):
         return {
             "id": self.id,
@@ -141,6 +150,9 @@ class FavsCharacters(db.Model):
     Characters = relationship(Characters)
     User_id = relationship(User)
 
+    def __repr__(self):
+        return '<FavsCharacters %r>' % self.FavsCharacters
+
     def serialize(self):
         return {
             "id": self.id,
@@ -153,6 +165,9 @@ class FavsPlanets(db.Model):
     Planets_Name = db.Column(String(50), ForeignKey('Planets.name'))
     Planets = relationship(Planets)
     User_id = relationship(User)
+
+    def __repr__(self):
+        return '<FavsPlanets %r>' % self.FavsPlanets
 
     def serialize(self):
         return {
@@ -167,6 +182,9 @@ class FavsStarships(db.Model):
     Starships = relationship(Starships)
     User_id = relationship(User)
 
+    def __repr__(self):
+        return '<FavsStarships %r>' % self.FavsStarships
+
     def serialize(self):
         return {
             "id": self.id,
@@ -180,6 +198,9 @@ class Pilots(db.Model):
     Characters = relationship(Characters)
     Starship_Name = db.Column(String(50), ForeignKey('Starships.id'))
     Starships = relationship(Starships)
+
+    def __repr__(self):
+        return '<Pilots %r>' % self.Pilots
 
     def serialize(self):
         return {
