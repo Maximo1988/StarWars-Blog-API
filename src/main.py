@@ -30,6 +30,13 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
+# generate sitemap with all your endpoints
+@app.route('/Planets/all', methods=['GET'])
+def Planetas_Favoritos():
+    planets_query=Planets.query.all()
+    all_planets=list(map(lambda planet: planet.serialize(),planets.query.all()))
+    return jsonify(all_planets), 200
+
 @app.route('/User', methods=['GET'])
 def bienvenida():
 
@@ -44,7 +51,7 @@ if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
     app.run(host='0.0.0.0', port=PORT, debug=False)
 
-@APP.route('/person/<int:person_id>', methods=['PUT', 'GET'])
+@app.route('/person/<int:person_id>', methods=['PUT', 'GET'])
 def get_single_person(person_id):
     """
     Single person
