@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 db = SQLAlchemy()
 
 class User(db.Model):
+    __tablename__ = 'User'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -22,7 +23,7 @@ class User(db.Model):
         }
 
 class Planets(db.Model):
-    __tablename__ = 'planets'
+    __tablename__ = 'Planets'
     id = db.Column(db.Integer, primary_key=True)
     diameter = db.Column(db.String(50))
     name = db.Column(db.String(50))
@@ -45,7 +46,7 @@ class Characters(db.Model):
     __tablename__ = 'Characters'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    homeworld = db.Column(db.Integer, db.ForeignKey('planets.id'))
+    homeworld = db.Column(db.Integer, db.ForeignKey('Planets.id'))
     homeworld_relation = relationship(Planets, primaryjoin=homeworld == Planets.id)
     url = db.Column(db.String(100))
     description = db.Column(db.String(50))
@@ -61,8 +62,6 @@ class Characters(db.Model):
             "url": self.url,
             "description": self.description,
         }
-
-
 
 class Starships(db.Model):
     __tablename__ = 'Starships'
@@ -87,71 +86,74 @@ class Starships(db.Model):
             "pilot_id": self.pilot_id,
         }
     
-""" class FavsCharacters(db.Model):
-    __tablename__ = 'FavsCharacters'
+class FavsCharacters(db.Model):
+    __tablename__ = 'Favorite Characters'
     id = db.Column(db.Integer, primary_key=True)
-    Characters_Name = db.Column(db.String(50), db.ForeignKey('Characters.name'))
-    Characters = db.relationship(Characters)
-    User_id = db.relationship(User)
+    Characters_Relation_id = db.Column(db.Integer, db.ForeignKey('Characters.id'))
+    Characters_Relation = relationship(Characters, primaryjoin=Characters_Relation_id == Characters.id)
+    User_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    User_Relation = relationship(User, primaryjoin=User_id == User.id)
 
     def __repr__(self):
-        return '<FavsCharacters %r>' % self.FavsCharacters
+        return '<Favorite Characters %r>' % self.Characters_Relation_id
 
     def serialize(self):
         return {
             "id": self.id,
-            "Characters_Name": self.Characters_Name,
-        } """
+            "Characters_Relation_id": self.Characters_Relation_id,
+        }
 
-""" class FavsPlanets(db.Model):
-    __tablename__ = 'FavsPlanets'
+class FavsPlanets(db.Model):
+    __tablename__ = 'Favorite Planets'
     id = db.Column(db.Integer, primary_key=True)
-    Planets_Name = db.Column(db.String(50), db.ForeignKey('Planets.name'))
-    Planets = db.relationship(Planets)
-    User_id = db.relationship(User)
+    Planets_Relation_id = db.Column(db.Integer, db.ForeignKey('Planets.id'))
+    Planets_Relation = relationship(Planets, primaryjoin=Planets_Relation_id == Planets.id)
+    User_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    User_Relation = relationship(User, primaryjoin=User_id == User.id)
 
     def __repr__(self):
-        return '<FavsPlanets %r>' % self.FavsPlanets
+        return '<Favorite Planets %r>' % self.Planets_Relation_id
 
     def serialize(self):
         return {
             "id": self.id,
-            "Planets_Name": self.Planets_Name,
+            "Planets_Relation_id": self.Planets_Relation_id,
         }
 
 class FavsStarships(db.Model):
-    __tablename__ = 'FavsStarships'
+    __tablename__ = 'Favorite Starships'
     id = db.Column(db.Integer, primary_key=True)
-    Starships_Name = db.Column(db.String(50), db.ForeignKey('Starships.name'))
-    Starships = db.relationship(Starships)
-    User_id = db.relationship(User)
+    Starships_Relation_id = db.Column(db.Integer, db.ForeignKey('Starships.id'))
+    Starships_Relation = relationship(Starships, primaryjoin=Starships_Relation_id == Starships.id)
+    User_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    User_Relation = relationship(User, primaryjoin=User_id == User.id)
 
     def __repr__(self):
-        return '<FavsStarships %r>' % self.FavsStarships
+        return '<Favorite Starships %r>' % self.Starships_Relation_id
 
     def serialize(self):
         return {
             "id": self.id,
-            "Starships_Name": self.Starships_Name,
+            "Starships_Relation_id": self.Starships_Relation_id,
         }
 
 class Pilots(db.Model):
     __tablename__ = 'Pilots'
     id = db.Column(db.Integer, primary_key=True)
-    Characters_Name = db.Column(db.String(50), db.ForeignKey('Characters.id'))
-    Characters = db.relationship(Characters)
-    Starship_Name = db.Column(db.String(50), db.ForeignKey('Starships.id'))
-    Starships = db.relationship(Starships)
+    Characters_id = db.Column(db.Integer, db.ForeignKey('Characters.id'))
+    Characters = relationship(Characters, primaryjoin=Characters_id == Characters.id )
+    Starships_id = db.Column(db.Integer, db.ForeignKey('Starships.id'))
+    Starship_Relation_id = relationship(Starships, primaryjoin=Starships_id == Starships.id)
 
     def __repr__(self):
-        return '<Pilots %r>' % self.Pilots
+        return '<Pilots %r>' % self.Characters_id
 
     def serialize(self):
         return {
             "id": self.id,
-            "Characters_Name": self.Characters_Name,
-            "Starship_Name": self.Starship_Name,
+            "Characters_id": self.Characters_id,
+            "Starship_id": self.Starship_id,
         }
 
     def to_dict(self):
-        return {} """
+        return {}
