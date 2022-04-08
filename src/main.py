@@ -37,14 +37,13 @@ def Planetas_Favoritos():
     all_planets=list(map(lambda planet: planet.serialize(),planets.query.all()))
     return jsonify(all_planets), 200
 
-@app.route('/User', methods=['GET'])
-def bienvenida():
-
-    response_body = {
-        "msg": "Hola, esta es tu respuesta GET /user"
-    }
-
-    return jsonify(response_body), 200
+@app.route('/User/favscharacters/<int:user_id>', methods=['GET'])
+def get_favscharacters(user_id):
+    favorite_user = Character.query.join(FavsCharacters, FavsCharacters.character_id == 
+    Character.id).filter(FavsCharacters.user_id == user_id).all()
+    serialize_favorite_user = list(map(lambda favorite_user : favorite_user.serialize(), favorites_user))
+    print(favorites_user)
+    return jsonify(serialize_favorite_user), 200
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
