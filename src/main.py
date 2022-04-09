@@ -59,6 +59,14 @@ def Post_Planet():
     db.session.add(new_Planet)
     db.session.commit()
     return jsonify(new_Planet.serialize()), 200
+
+@app.route('/User/favscharacters/<int:user_id>', methods=['GET'])
+def get_favscharacters(user_id):
+    favorites_user = Characters.query.join(FavsCharacters, FavsCharacters.Characters_Relation_id == 
+    Characters.id).filter(FavsCharacters.User_id == user_id).all()
+    serialize_favorite_user = list(map(lambda favorite_user : favorite_user.serialize(), favorites_user))
+    print(favorites_user)
+    return jsonify(serialize_favorite_user), 200
     
 # Create a route to authenticate your users and return JWTs. The
 # create_access_token() function is used to actually generate the JWT.
@@ -72,14 +80,6 @@ def login():
 
     access_token = create_access_token(identity=username)
     return jsonify(access_token=access_token)
-
-@app.route('/User/favscharacters/<int:user_id>', methods=['GET'])
-def get_favscharacters(user_id):
-    favorites_user = Characters.query.join(FavsCharacters, FavsCharacters.Characters_Relation_id == 
-    Characters.id).filter(FavsCharacters.User_id == user_id).all()
-    serialize_favorite_user = list(map(lambda favorite_user : favorite_user.serialize(), favorites_user))
-    print(favorites_user)
-    return jsonify(serialize_favorite_user), 200
 
 # Protect a route with jwt_required, which will kick out requests
 # without a valid JWT present.
