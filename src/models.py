@@ -46,7 +46,7 @@ class Characters(db.Model):
     __tablename__ = 'Characters'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    homeworld = db.Column(db.Integer, db.ForeignKey('Planets.id'))
+    homeworld = db.Column(db.Integer, db.ForeignKey('Planets.id', ondelete='CASCADE'))
     homeworld_relation = relationship(Planets, primaryjoin=homeworld == Planets.id)
     url = db.Column(db.String(100))
     description = db.Column(db.String(50))
@@ -70,7 +70,7 @@ class Starships(db.Model):
     name = db.Column(db.String(50))
     url = db.Column(db.String(50))
     description = db.Column(db.String(50))
-    pilot_id = db.Column(db.Integer, db.ForeignKey('Characters.id'))
+    pilot_id = db.Column(db.Integer, db.ForeignKey('Characters.id', ondelete='CASCADE'))
     pilot_relation = relationship(Characters, primaryjoin=pilot_id == Characters.id)
 
     def __repr__(self):
@@ -89,9 +89,9 @@ class Starships(db.Model):
 class FavsCharacters(db.Model):
     __tablename__ = 'Favorite Characters'
     id = db.Column(db.Integer, primary_key=True)
-    Characters_Relation_id = db.Column(db.Integer, db.ForeignKey('Characters.id'))
+    Characters_Relation_id = db.Column(db.Integer, db.ForeignKey('Characters.id', ondelete='CASCADE'))
     Characters_Relation = relationship(Characters, primaryjoin=Characters_Relation_id == Characters.id)
-    User_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    User_id = db.Column(db.Integer, db.ForeignKey('User.id', ondelete='CASCADE'))
     User_Relation = relationship(User, primaryjoin=User_id == User.id)
 
     def __repr__(self):
@@ -106,9 +106,9 @@ class FavsCharacters(db.Model):
 class FavsPlanets(db.Model):
     __tablename__ = 'Favorite Planets'
     id = db.Column(db.Integer, primary_key=True)
-    Planets_Relation_id = db.Column(db.Integer, db.ForeignKey('Planets.id'))
+    Planets_Relation_id = db.Column(db.Integer, db.ForeignKey('Planets.id', ondelete='CASCADE'))
     Planets_Relation = relationship(Planets, primaryjoin=Planets_Relation_id == Planets.id)
-    User_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    User_id = db.Column(db.Integer, db.ForeignKey('User.id', ondelete='CASCADE'))
     User_Relation = relationship(User, primaryjoin=User_id == User.id)
 
     def __repr__(self):
@@ -123,9 +123,9 @@ class FavsPlanets(db.Model):
 class FavsStarships(db.Model):
     __tablename__ = 'Favorite Starships'
     id = db.Column(db.Integer, primary_key=True)
-    Starships_Relation_id = db.Column(db.Integer, db.ForeignKey('Starships.id'))
+    Starships_Relation_id = db.Column(db.Integer, db.ForeignKey('Starships.id', ondelete='CASCADE'))
     Starships_Relation = relationship(Starships, primaryjoin=Starships_Relation_id == Starships.id)
-    User_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    User_id = db.Column(db.Integer, db.ForeignKey('User.id', ondelete='CASCADE'))
     User_Relation = relationship(User, primaryjoin=User_id == User.id)
 
     def __repr__(self):
@@ -140,9 +140,9 @@ class FavsStarships(db.Model):
 class Pilots(db.Model):
     __tablename__ = 'Pilots'
     id = db.Column(db.Integer, primary_key=True)
-    Characters_id = db.Column(db.Integer, db.ForeignKey('Characters.id'))
+    Characters_id = db.Column(db.Integer, db.ForeignKey('Characters.id', ondelete='CASCADE'))
     Characters = relationship(Characters, primaryjoin=Characters_id == Characters.id )
-    Starships_id = db.Column(db.Integer, db.ForeignKey('Starships.id'))
+    Starships_id = db.Column(db.Integer, db.ForeignKey('Starships.id', ondelete='CASCADE'))
     Starship_Relation_id = relationship(Starships, primaryjoin=Starships_id == Starships.id)
 
     def __repr__(self):
@@ -152,7 +152,7 @@ class Pilots(db.Model):
         return {
             "id": self.id,
             "Characters_id": self.Characters_id,
-            "Starship_id": self.Starship_id,
+            "Starship_id": self.Starships_id,
         }
 
     def to_dict(self):

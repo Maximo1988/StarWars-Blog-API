@@ -64,11 +64,33 @@ def Post_Planet():
     db.session.commit()
     return jsonify(new_Planet.serialize()), 200
 
-delete_planet = Planets.query.get(planet_id)
-if delete_planet is None:
-   raise APIException("El planeta que queires eliminar no ha sido encontrado", status_code=404)
-db.session.delete(delete_planet)
-db.session.commit()
+@app.route('/Planet/<int:planet_id>', methods=['DELETE'])
+def delete_planet(planet_id):
+    delete_planet = Planets.query.get(planet_id)
+    if delete_planet is None:
+        raise APIException("El planeta que quieres eliminar no ha sido encontrado", status_code=404)
+    db.session.delete(delete_planet)
+    db.session.commit()
+    return jsonify(delete_planet), 200
+
+@app.route('/Planet/<int:planet_id>', methods=['PUT'])
+def put_planet(planet_id):
+    put_planet = Planets.query.get(planet_id)
+    if put_planet is None:
+        raise APIException('Planeta no actualizado', status_code=404)
+    body=request.get_json()
+    if body is None:
+        raise APIException("Planeta no actualizado")
+    if "diameter" in body:
+        put_planet.diameter = body["diameter"]
+    if "name" in body:
+        put_planet.name = body["name"]
+    if "url" in body:
+        put_planet.url = body["url"]
+    if "description" in body:
+        put_planet.description = body["description"]
+    db.session.commit()
+    return jsonify(put_planet.serialize()), 200
 
 @app.route('/Characters/all', methods=['GET'])
 def Personajes_Favoritos():
@@ -90,11 +112,34 @@ def Post_Character():
     db.session.commit()
     return jsonify(new_Character.serialize()), 200
 
-delete_character = Characters.query.get(character_id)
-if delete_character is None:
-   raise APIException("El personaje que queires eliminar no ha sido encontrado", status_code=404)
-db.session.delete(delete_character)
-db.session.commit()
+
+@app.route('/Character/<int:character_id>', methods=['DELETE'])
+def delete_character(character_id):
+    delete_character = Characters.query.get(character_id)
+    if delete_character is None:
+        raise APIException("El personaje que quieres eliminar no ha sido encontrado", status_code=404)
+    db.session.delete(delete_character)
+    db.session.commit()
+    return jsonify(delete_character), 200
+
+@app.route('/Character/<int:character_id>', methods=['PUT'])
+def put_character(character_id):
+    put_character = Characters.query.get(character_id)
+    if put_character is None:
+        raise APIException('Personaje no actualizado', status_code=404)
+    body=request.get_json()
+    if body is None:
+        raise APIException("Personaje no actualizado")
+    if "name" in body:
+        put_character.name = body["name"]
+    if "homeworld" in body:
+        put_character.homeworld = body["homeworld"]
+    if "url" in body:
+        put_character.url = body["url"]
+    if "description" in body:
+        put_character.description = body["description"]
+    db.session.commit()
+    return jsonify(put_character.serialize()), 200
 
 @app.route('/Starships/all', methods=['GET'])
 def Naves_Favoritos():
@@ -116,11 +161,33 @@ def Post_Starship():
     db.session.commit()
     return jsonify(new_Starship.serialize()), 200
 
-delete_starship = Starships.query.get(starship_id)
-if delete_starship is None:
-   raise APIException("La nave que queires eliminar no ha sido encontrada", status_code=404)
-db.session.delete(delete_starship)
-db.session.commit()
+@app.route('/Starship/<int:starship_id>', methods=['DELETE'])
+def delete_starship(starship_id):
+    delete_starship = Starships.query.get(starship_id)
+    if delete_starship is None:
+        raise APIException("La nave que quieres eliminar no ha sido encontrada", status_code=404)
+    db.session.delete(delete_starship)
+    db.session.commit()
+    return jsonify(delete_starship), 200
+
+@app.route('/Starship/<int:starship_id>', methods=['PUT'])
+def put_starship(starship_id):
+    put_starship = Starships.query.get(starship_id)
+    if put_starship is None:
+        raise APIException('Nave no actualizada', status_code=404)
+    body=request.get_json()
+    if body is None:
+        raise APIException("Nave no actualizada")
+    if "model" in body:
+        put_starship.model = body["model"]
+    if "name" in body:
+        put_starship.name = body["name"]
+    if "url" in body:
+        put_starship.url = body["url"]
+    if "description" in body:
+        put_starship.description = body["description"]
+    db.session.commit()
+    return jsonify(put_starship.serialize()), 200
 
 @app.route('/Pilots/all', methods=['GET'])
 def Pilotos_Favoritos():
@@ -142,19 +209,35 @@ def Post_Pilot():
     db.session.commit()
     return jsonify(new_Pilot.serialize()), 200
 
-delete_pilot = Pilots.query.get(pilot_id)
-if delete_pilot is None:
-   raise APIException("El piloto que queires eliminar no ha sido encontrado", status_code=404)
-db.session.delete(delete_pilot)
-db.session.commit()
+@app.route('/Pilot/<int:pilot_id>', methods=['DELETE'])
+def delete_pilot(pilot_id):
+    delete_pilot = Pilots.query.get(pilot_id)
+    if delete_pilot is None:
+        raise APIException("El piloto que quieres eliminar no ha sido encontrado", status_code=404)
+    db.session.delete(delete_pilot)
+    db.session.commit()
+    return jsonify(delete_pilot), 200
+
+@app.route('/Pilot/<int:pilot_id>', methods=['PUT'])
+def put_pilot(pilot_id):
+    put_pilot = Pilots.query.get(pilot_id)
+    if put_pilot is None:
+        raise APIException('Piloto no actualizado', status_code=404)
+    body=request.get_json()
+    if "Characters_id" in body:
+        put_pilot.Characters_id = body["Characters_id"]
+    if "Starships_id" in body:
+        put_pilot.Starships_id = body["Starships_id"]
+    db.session.commit()
+    return jsonify(put_pilot.serialize()), 200
 
 @app.route('/User/favscharacters/<int:user_id>', methods=['GET'])
 def get_favscharacters(user_id):
-    favorites_user = Characters.query.join(FavsCharacters, FavsCharacters.Characters_Relation_id == 
+    favorites_characters = Characters.query.join(FavsCharacters, FavsCharacters.Characters_Relation_id == 
     Characters.id).filter(FavsCharacters.User_id == user_id).all()
-    serialize_favorite_user = list(map(lambda favorite_user : favorite_user.serialize(), favorites_user))
-    print(favorites_user)
-    return jsonify(serialize_favorite_user), 200 
+    serialize_favorites_characters = list(map(lambda favorite_character : favorite_character.serialize(), favorites_characters))
+    print(favorites_characters)
+    return jsonify(serialize_favorites_characters), 200 
 
 @app.route('/User/favscharacters/<int:user_id>', methods=['POST'])
 def Post_Favorite_Characters():
@@ -170,19 +253,22 @@ def Post_Favorite_Characters():
     db.session.commit()
     return jsonify(new_FavCharacter.serialize()), 200
 
-delete_Favorite_Character = FavsCharacters.query.get(favcharacter_id)
-if delete_Favorite_Character is None:
-   raise APIException("El personaje que quieres eliminar no ha sido encontrado", status_code=404)
-db.session.delete(delete_Favorite_Character)
-db.session.commit()
+@app.route('/Favscharacter/<int:favcharacter_id>', methods=['DELETE'])
+def delete_Favorite_Character(favcharacter_id):
+    delete_Favorite_Character = FavsCharacters.query.get(favcharacter_id)
+    if delete_Favorite_Character is None:
+        raise APIException("El personaje que quieres eliminar no ha sido encontrado", status_code=404)
+    db.session.delete(delete_Favorite_Character)
+    db.session.commit()
+    return jsonify(delete_Favorite_Character.serialize()), 200
 
-@app.route('User/favsplanets/<int:user_id>', methods=['GET'])
+@app.route('/User/favsplanets/<int:user_id>', methods=['GET'])
 def get_favsplanets(user_id):
-    favorites_user = Planets.query.join(FavsPlanets, FavsPlanets.Planets_Relation_id ==
+    favorites_planets = Planets.query.join(FavsPlanets, FavsPlanets.Planets_Relation_id ==
     Planets.id).filter(FavsPlanets.User_id == user_id).all()
-    serialize_favorite_user = list(map(lambda favorite_user : favorite_user.serialize(), favorites_user))
-    print(favorites_user)
-    return jsonify(serialize_favorite_user), 200
+    serialize_favorites_planets = list(map(lambda favorite_planet : favorite_planet.serialize(), favorites_planets))
+    print(favorites_planets)
+    return jsonify(serialize_favorites_planets), 200
 
 @app.route('/User/favsplanets/<int:user_id>', methods=['POST'])
 def Post_Favorite_Planets():
@@ -198,19 +284,22 @@ def Post_Favorite_Planets():
     db.session.commit()
     return jsonify(new_FavPlanet.serialize()), 200
 
-delete_Favorite_Planet = FavsPlanets.query.get(favplanet_id)
-if delete_Favorite_Planet is None:
-   raise APIException("El planeta que quieres eliminar no ha sido encontrado", status_code=404)
-db.session.delete(delete_Favorite_Planet)
-db.session.commit()
+@app.route('/Favsplanets/<int:favplanet_id>', methods=['DELETE'])
+def delete_Favorite_Planet(favplanet_id):
+    delete_Favorite_Planet = FavsPlanets.query.get(favplanet_id)
+    if delete_Favorite_Planet is None:
+        raise APIException("El planeta que quieres eliminar no ha sido encontrado", status_code=404)
+    db.session.delete(delete_Favorite_Planet)
+    db.session.commit()
+    return jsonify(delete_Favorite_Planet.serialize()), 200
 
-@app.route('User/favsstarships/<int:user_id>', methods=['GET'])
+@app.route('/User/favsstarships/<int:user_id>', methods=['GET'])
 def get_favsstarships(user_id):
-    favorites_user =Starships.query.join(FavsStarships, FavsStarships.Starships_Relation_id ==
+    favorites_starships =Starships.query.join(FavsStarships, FavsStarships.Starships_Relation_id ==
     Starships.id).filter(FavsStarships,User_id == user_id).all()
-    serialize_favorite_user = list(map(lambda favorite_user : favorite_user.serialize(), favorites_user))
-    print(favorite_user)
-    return jsonify(serialize_favorite_user), 200
+    serialize_favorites_starships = list(map(lambda favorite_starship : favorite_starship.serialize(), favorites_starships))
+    print(favorites_starships)
+    return jsonify(serialize_favorites_starships), 200
 
 @app.route('/User/favsstarships/<int:user_id>', methods=['POST'])
 def Post_Favorite_Starship():
@@ -226,11 +315,14 @@ def Post_Favorite_Starship():
     db.session.commit()
     return jsonify(new_FavStarship.serialize()), 200 
 
-delete_Favorite_Starship = FavsStarships.query.get(favstarship_id)
-if delete_Favorite_Starship is None:
-   raise APIException("La nave que quieres eliminar no ha sido encontrado", status_code=404)
-db.session.delete(delete_Favorite_Starship)
-db.session.commit()
+@app.route('/Favsstarships/<int:favstarship_id>', methods=['DELETE'])
+def delete_Favorite_Starship(favstarship_id):
+    delete_Favorite_Starship = FavsStarships.query.get(favstarship_id)
+    if delete_Favorite_Starship is None:
+        raise APIException("La nave que quieres eliminar no ha sido encontrado", status_code=404)
+    db.session.delete(delete_Favorite_Starship)
+    db.session.commit()
+    return jsonify(delete_Favorite_Starship.serialize()), 200
 
 
 # Create a route to authenticate your users and return JWTs. The
@@ -255,10 +347,7 @@ def protected():
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200
 
-# this only runs if `$ python src/main.py` is executed
-if __name__ == '__main__':
-    PORT = int(os.environ.get('PORT', 3000))
-    app.run(host='0.0.0.0', port=PORT, debug=False)
+
 
 @app.route('/person/<int:person_id>', methods=['PUT', 'GET'])
 def get_single_person(person_id):
@@ -274,5 +363,12 @@ def get_single_person(person_id):
     if request.method == 'GET':
         user1 = Person.query.get(person_id)
         return jsonify(user1.serialize()), 200
-
+    
     return "Invalid Method", 404
+
+# this only runs if `$ python src/main.py` is executed
+if __name__ == '__main__':
+    PORT = int(os.environ.get('PORT', 3000))
+    app.run(host='0.0.0.0', port=PORT, debug=False)
+
+
