@@ -10,6 +10,7 @@ from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User, Characters, FavsCharacters, FavsPlanets, FavsStarships, Planets, Starships, Pilots
 #from models import Person
+
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
@@ -39,9 +40,57 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
+@app.route('/Registro', methods=['POST'])
+def registro():
+    name = request.json.get("name", None)
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+    is_active = request.json.get("is_active", None)
 
+    if name is None:
+        raise APIException("No has ingresado el nombre de usuario", status_code=400)
+    if email is None:
+        raise APIException("No has ingresado el email", status_code=400)
+    if password is None:
+        raise APIException("No has ingresado la contraseña", status_code=400)
+    if is_active is None:
+        raise APIException("No estas activo en la sesión", status_code=400)
 
+    new_user = User(name=name, email=email, password=password, is_active=is_active)
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify(new_user.serialize()), 200
+    
+# Create a route to authenticate your users and return JWTs. The
+# create_access_token() function is used to actually generate the JWT.
+@app.route("/login", methods=["POST"])
+def login():
+    name = request.json.get("name", None)
+    password = request.json.get("password", None)
+    pw_hash = bcrypt.generate_password_hash('STAR-WARS-API')
 
+    if name is None:
+        raise APIException("El nombre es incorrecto", status_code=400)
+    if password is None:
+        raise APIException("La contraseña es incorrecta", status_code=400)
+
+    new_login = User(name=name, password=password)
+    db.session.add(new_login)
+    db.session.commit()
+    return jsonify(new_login.serialize()), 200
+
+    access_token = create_access_token(identity=name)
+    return jsonify(access_token=access_token)
+
+@app.route('/logout', methods=['DELETE'])
+def logout(User_id):
+    logout = User.query.get(User_id)
+    if logout is None:
+        raise APIException("No se ha podido cerrar sesion", status_code=404)
+    
+    db.session.delete(logout)
+    db.session.commit()
+    return jsonify(logout), 200
 
 # generate sitemap with all your endpoints
 @app.route('/Planets/all', methods=['GET'])
@@ -324,19 +373,6 @@ def delete_Favorite_Starship(favstarship_id):
     db.session.commit()
     return jsonify(delete_Favorite_Starship.serialize()), 200
 
-
-# Create a route to authenticate your users and return JWTs. The
-# create_access_token() function is used to actually generate the JWT.
-@app.route("/login", methods=["POST"])
-def login():
-    username = request.json.get("username", None)
-    password = request.json.get("password", None)
-    pw_hash = bcrypt.generate_password_hash('hunter2')
-    if username != "test" or password != "test":
-        return jsonify({"msg": "Bad username or password"}), 401
-
-    access_token = create_access_token(identity=username)
-    return jsonify(access_token=access_token)
 
 # Protect a route with jwt_required, which will kick out requests
 # without a valid JWT present.
